@@ -8,7 +8,7 @@
 	<title>Story Blog - Userlist</title>
 	<style type="text/css">
 	.bgimg {
-		    background-image: url("/Story_Blog_MyBatis/Project/img/back2_babypink.jpg");
+		    background-image: url("${pageContext.request.contextPath}/img/back2_babypink.jpg");
 		    min-height: 100%;
 		    background-position: center;
 		    background-size: cover;		
@@ -63,14 +63,14 @@
 	                <td align="center" width="100">${user.filename}</td>
 	               	<td align="center" width="100">
 	               		<!-- 수정 삭제 만들기  -->
-	               		<form method="post" action="<%=request.getContextPath() %>/story/admin/updateUserForm">
+	               		<form method="post" action="${pageContext.request.contextPath}/admin/updateUserForm">
 		  					<input type="submit" class="w3-button w3-white w3-hover-white" value="수정">
 		  					<input type="hidden" name="email" value="${user.email}">
 							<input type="hidden" name="pwd" value="${user.pwd}">
 						</form>
 	  					
 						
-						<form method="post" action="<%=request.getContextPath() %>/story/admin/deleteUserPro">
+						<form method="post" action="${pageContext.request.contextPath}/admin/deleteUserPro">
 							<input type="submit" class="w3-button w3-pink w3-hover-pink" value="삭제">
 							
 							<!-- hidden으로 email, pwd가져오기!!!  -->

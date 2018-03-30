@@ -1,17 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
-<%-- <%@ page import="com.db.UserDBBean" %>
-<%@ page import="com.db.UserDataBean" %> --%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<%-- <% 
-	String email=request.getParameter("email");
-	String pwd=request.getParameter("pwd");
-	
-	try {
-		UserDBBean userPro = UserDBBean.getInstance();
-		UserDataBean user = userPro.getUser(email, pwd); 
-%>
- --%>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
@@ -19,7 +8,7 @@
 	<title>Insert title here</title>
 	<style type="text/css">
 		.bgimg {
-			    background-image: url("/Story_Blog_MyBatis/Project/img/back2_babypink.jpg");
+			    background-image: url("${pageContext.request.contextPath}/img/back2_babypink.jpg");
 			    min-height: 100%;
 			    background-position: center;
 			    background-size: cover;		
@@ -38,9 +27,9 @@
 	<div class="w3-container" style="margin-top:54px; margin-left: 10%;">
 		<div class="w3-container w3-center w3-white w3-round" style="margin: 16px;">
 			<h3 class="w3-center">회 원 수 정</h3>
-			<form method="post" enctype="multipart/form-data" action="<%=request.getContextPath() %>/story/admin/updateUserPro" style="padding: 3%;">
+			<form method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/admin/updateUserPro" style="padding: 3%;">
 			
-				<div class="w3-button w3-pink w3-right" onclick="location.href='accountList'" style="margin-bottom: 10px;">목록</div>
+				<div class="w3-button w3-pink w3-right" onclick="location.href='${pageContext.request.contextPath}/admin/accountList'" style="margin-bottom: 10px;">목록</div>
 				
 			
 			   
@@ -87,18 +76,12 @@
 				    </div>
 				</div>
 				
-				<%-- <%	String pageNum = request.getParameter("pageNum");
-						if (pageNum == null || pageNum == "") { 
-							pageNum = "1"; 
-				} %> --%>
-				
 				<div class="w3-right">
 				
 					<input type="hidden" name="email" value="${user.email}">
 					<input type="hidden" name="pageNum" value="${pageNum}">
 					<input type="hidden" name="filename" value="${user.filename}">
 
-					
 					<input type="submit" value="Send" class="w3-button w3-large w3-pink">
 				</div>
 			 
@@ -109,8 +92,5 @@
 	</div>
 </div>
 
-
-
-<%-- <% } catch (Exception e) {} %> --%>
 </body>
 </html>

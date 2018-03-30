@@ -8,36 +8,12 @@
 <title>Insert title here</title>
 </head>
 <body>
-<%-- <% request.setCharacterEncoding("EUC-KR"); %>
-
-<jsp:useBean id="user" class="com.db.UserDataBean">
-<jsp:setProperty name="user" property="*"/>
-</jsp:useBean>
-	<% System.out.println(user); %>
-	<%
-	try {
-		UserDBBean userPro = UserDBBean.getInstance();
-		int chk = userPro.updateUser(user);
-		
-		String email = request.getParameter("email");
-		String pwd= request.getParameter("pwd");
-		String pageNum = request.getParameter("pageNum");
-			if (pageNum == null || pageNum == "") {
-				pageNum = "1";
-			}
-		
-	%>
-	
-	<%
-	System.out.println("수정여부: " + chk); --%>
 	<c:if test="${chk==1}">
-	
-	<script type="text/javascript">
-		alert("수정 완료");
-		location.href="/Story_Blog_MyBatis/story/admin/accountList";
-	</script>
-	<meta http-equiv="Refresh" content="0;url=updateUserForm?email=${email}&pwd=${pwd}&pageNum=${pageNum}">
-	<%-- <meta http-equiv="Refresh" content="0;url=accountList?pageNum=<%=pageNum%>"> --%>
+		<script type="text/javascript">
+			alert("수정 완료");
+			// 수정하기! location.href="${pageContext.request.contextPath}/admin/accountList";
+		</script>
+		<meta http-equiv="Refresh" content="0;url=updateUserForm?email=${email}&pwd=${pwd}&pageNum=${pageNum}">
 	</c:if>
 	
 	<c:if test="${chk!=1}">
