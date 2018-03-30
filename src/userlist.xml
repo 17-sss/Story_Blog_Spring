@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user.mybatis">
+	
+	<select id="getUserCount" resultType="int">
+		SELECT nvl(count(*),0) FROM userlist
+	</select>
+	
+	<select id="getUsers" parameterType="hashmap" resultType="User">
+		select * from (select rownum rnum, a.* from (select email, name, pwd, tel, birth, cdate, ip, filename from userlist)a) 
+	where rnum between #{startRow} and #{endRow} order by cdate desc
+	</select>
+	
+	<select id="getUser" parameterType="hashmap" resultType="User">
+		select * from userlist WHERE email = #{email} and pwd = #{pwd}
+	</select>
+	
+	<select id="getUser2" parameterType="hashmap" resultType="User">
+		select * from userlist where email = #{email}
+	</select>
+	
+	<update id="updateUser" parameterType="User">
+		update userlist set name=#{name}, pwd=#{pwd}, tel=#{tel}, birth=#{birth}, filename=#{filename} where email=#{email}	
+	</update>
+	
+	<delete id="deleteUser" parameterType="hashmap">
+		delete from userlist where email=#{email} and pwd=#{pwd}	
+	</delete>
+	
+	<insert id="insertUser" parameterType="User">
+		insert into userlist(email, name, pwd, tel, birth, cdate, ip, filename, filesize) values(#{email},#{name},#{pwd},#{tel},#{birth}, sysdate, #{ip},#{filename},#{filesize})
+	</insert>
+	
+	<select id="confirmEmail" parameterType="hashmap" resultType="User">
+		select email from userlist where email=#{email}
+	</select>
+	
+	<!-- 보류 -->
+	<select id="loginCheck" parameterType="hashmap" resultType="User">
+		select pwd from userlist where email=#{email}
+	</select>
+	
+</mapper>

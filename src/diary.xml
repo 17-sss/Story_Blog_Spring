@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="diary.mybatis">
+	
+	<select id="getDiaryCount" resultType="int" parameterType="hashmap">
+		SELECT nvl(count(*),0) FROM diary WHERE diaryid = #{diaryid} and email = #{email}
+	</select>
+	
+	<select id="getDiaries" resultType="Diary" parameterType="hashmap">
+		select * from (select rownum rnum, b.* from (select num, email, diaryid, subject, cdate, content, ip, filename0, filename1, filename2,
+			filename3, filename4 from diary where diaryid = #{diaryid} and email = #{email} order by cdate desc) b) where rnum between #{startRow} and #{endRow}
+	</select>
+	
+	<select id="getImgDiaryCountTotal" resultType="int" parameterType="hashmap">
+		SELECT nvl(count(filename0),0) + nvl(count(filename1),0) + nvl(count(filename2),0) + nvl(count(filename3),0) + nvl(count(filename4),0)
+			FROM diary WHERE diaryid = #{diaryid} and email=#{email}
+	</select>
+	
+	<select id="getDiary" parameterType="hashmap" resultType="Diary">
+		select * from diary where num = #{num} and email = #{email} and diaryid = #{diaryid}
+	</select>
+	
+	<update id="updateDiary" parameterType="Diary">
+		update diary set diaryid = #{diaryid}, subject = #{subject}, content = #{content}, filename0 = #{filename0}, filename1 = #{filename1}, filename2 = #{filename2},
+		filename3 = #{filename3}, filename4 = #{filename4} where num = #{num} and email = #{email}
+	</update>
+	
+	<delete id="deleteDiary" parameterType="hashmap">
+		delete from diary where num = #{num} and email = #{email} and diaryid = #{diaryid}
+	</delete>
+	
+	<select id="getNextNumber" resultType="int">
+		select diaryser.nextval from dual
+	</select>
+	
+	<insert id="insertDiary" parameterType="Diary">
+		insert into diary(num, email, diaryid, subject, cdate, content, ip, filename0, filesize0, filename1, filesize1, filename2, filesize2, filename3, filesize3, filename4, filesize4) values(#{num},#{email},#{diaryid},#{subject},sysdate,#{content},#{ip},#{filename0},#{filesize0},#{filename1},#{filesize1},#{filename2},#{filesize2},#{filename3},#{filesize3},#{filename4},#{filesize4})
+	</insert>
+	
+
+</mapper>
