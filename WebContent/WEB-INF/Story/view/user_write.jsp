@@ -1,9 +1,5 @@
-<%@page import="java.text.SimpleDateFormat"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
 	pageEncoding="EUC-KR"%>
-<%
-	String ctx = request.getContextPath(); //콘텍스트명 얻어오기.
-%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -20,7 +16,7 @@
 </style>
 
 <!-- SmartEditor를 사용하기 위해서 다음 js파일을 추가 (경로 확인) -->
-<script type="text/javascript" src="<%=ctx %>/SE2/js/service/HuskyEZCreator.js" charset="EUC-KR"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/SE2/js/service/HuskyEZCreator.js" charset="EUC-KR"></script>
 <!-- jQuery를 사용하기위해 jQuery라이브러리 추가 -->
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
 
@@ -32,7 +28,7 @@
 <div>&nbsp;
 	<!-- form -->
 	
-	<form id="frm" action="<%=request.getContextPath()%>/story/user_writePro" enctype="multipart/form-data" method="post">
+	<form id="frm" action="${pageContext.request.contextPath}/story/user_writePro" enctype="multipart/form-data" method="post">
 	<input type="hidden" name="diaryid" value="${diaryid}">
 	<input type="hidden" name="num" value="${num}">
 		
@@ -171,7 +167,7 @@
 	nhn.husky.EZCreator.createInIFrame({
 		oAppRef: oEditors,
 		elPlaceHolder: "ir1",
-		sSkinURI: "/Story_Blog_MyBatis/SE2/SmartEditor2Skin.html",	
+		sSkinURI: "${pageContext.request.contextPath}/SE2/SmartEditor2Skin.html",	
 		htParams : {
 			bUseToolbar : true,				// 툴바 사용 여부 (true:사용/ false:사용하지 않음)
 			bUseVerticalResizer : true,		// 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)

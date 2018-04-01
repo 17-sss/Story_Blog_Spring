@@ -28,7 +28,7 @@
 <div style="margin-left: 10%; margin-right: 10%;">
 
 		<!-- 하루의 끝 - form 전송 -->
-		<form action="<%= request.getContextPath() %>/story/user_write" method="post">
+		<form action="${pageContext.request.contextPath}/story/user_write" method="post">
 				
 			<!-- 하루의 끝 -->
 			<div class="w3-row-padding">
@@ -38,7 +38,7 @@
 							<h6 class="w3-text-gray">오늘 하루를 요약해보세요.</h6>
 							<input class="w3-input w3-border w3-text-grey" name="subject" type="text" style="font-size: 9pt;" value="${subject}"><br>
 							<button type="submit" class="w3-button w3-theme w3-pink w3-right" 
-								onclick="location.href='/Story_Blog_MyBatis/story/user_write'">글쓰기</button>
+								onclick="location.href='${pageContext.request.contextPath}/story/user_write'">글쓰기</button>
 								<input type="hidden" name="diaryid" value="${diaryid}">
 								<input type="hidden" name="subject" value="${subejct}">
 						</div>
@@ -78,10 +78,10 @@
 				
 				<div class="w3-third w3-container w3-margin-bottom">
 					<div class="w3-container w3-white w3-padding w3-center">
-						<img src="/Story_Blog_MyBatis/fileSave/${diary.filename0}" alt="${diary.filename0}" class=autoimg>
+						<img src="${pageContext.request.contextPath}/fileSave/${diary.filename0}" alt="${diary.filename0}" class=autoimg>
 						<div class="w3-container w3-white">
 							<p>
-								<a href="<%=request.getContextPath()%>/story/user_content?num=${diary.num}&pageNum=${currentPage}"><b>${diary.subject}</b></a>
+								<a href="${pageContext.request.contextPath}/story/user_content?num=${diary.num}&pageNum=${currentPage}"><b>${diary.subject}</b></a>
 							</p>
 							<p>
 								<span>${diary.cdate}</span>
@@ -139,10 +139,10 @@
 			<c:if test="${diary.filename0==null}">
 				<div class="w3-third w3-container w3-margin-bottom">
 					<div class="w3-container w3-white w3-padding w3-center">
-						<img src="/Story_Blog_MyBatis/Project/img/no_image.png" alt="${diary.filename0}" class=autoimg>
+						<img src="${pageContext.request.contextPath}/img/no_image.png" alt="${diary.filename0}" class=autoimg>
 						<div class="w3-container w3-white">
 							<p>
-								<a href="<%=request.getContextPath()%>/story/user_content?num=${diary.num}&pageNum=${currentPage}"><b>${diary.subject}</b></a>
+								<a href="${pageContext.request.contextPath}/story/user_content?num=${diary.num}&pageNum=${currentPage}"><b>${diary.subject}</b></a>
 							</p>
 							<p>
 								<span>${diary.cdate}</span>

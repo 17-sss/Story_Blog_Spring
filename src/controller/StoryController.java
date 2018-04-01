@@ -349,276 +349,224 @@ public class StoryController {
 	// 일기 수정 전송 - 파일 업로드 (수정요망)
 	@RequestMapping("/user_updateDPro")
 	public String user_updateDPro(Model model, MultipartHttpServletRequest req)  throws Throwable {
-		String pageNum = req.getParameter("pageNum");
+		DiaryDataBean diary = new DiaryDataBean();
 		
-		if (pageNum == null || pageNum == "") {
-			pageNum = "1";
-		}
+		int num = Integer.parseInt(req.getParameter("num"));
+		
+		String pageNum = req.getParameter("pageNum");
+		if (pageNum == null || pageNum == "") {pageNum = "1";}
+		
+		String diaryid = req.getParameter("diaryid");
+		if (diaryid==null) diaryid = "Main";
 	
 		//ModelAndView mv = new ModelAndView();
-		MultipartFile multi = req.getFile("filename");
-		String filename = multi.getOriginalFilename();
-		System.out.println("유저 수정 이미지: "+filename+"\n");
+		MultipartFile multi0 = req.getFile("filename0");
+		String filename0 = multi0.getOriginalFilename();
+		MultipartFile multi1 = req.getFile("filename1");
+		String filename1 = multi1.getOriginalFilename();
+		MultipartFile multi2 = req.getFile("filename2");
+		String filename2 = multi2.getOriginalFilename();
+		MultipartFile multi3 = req.getFile("filename3");
+		String filename3 = multi3.getOriginalFilename();
+		MultipartFile multi4 = req.getFile("filename4");
+		String filename4 = multi4.getOriginalFilename();
+		System.out.println("일기 수정 이미지1: "+filename0+"\n" + "일기 수정 이미지2: "+filename1+"\n" + "일기 수정 이미지3: "+filename2+"\n"
+				+"일기 수정 이미지4: "+filename3+"\n" + "일기 수정 이미지5: "+filename4+"\n");
 		
-		UserDataBean user = new UserDataBean();
+		diary.setNum(num);
+		diary.setEmail(req.getParameter("email"));
+		diary.setSubject(req.getParameter("subject"));
+		diary.setContent(req.getParameter("content"));
+		diary.setDiaryid(req.getParameter("diaryid"));
+		diary.setFilename0(req.getParameter("filename0"));
+		diary.setFilename1(req.getParameter("filename1"));
+		diary.setFilename2(req.getParameter("filename2"));
+		diary.setFilename3(req.getParameter("filename3"));
+		diary.setFilename4(req.getParameter("filename4"));
 		
-		user.setEmail(req.getParameter("email"));
-		user.setPwd(req.getParameter("pwd"));
-		user.setName(req.getParameter("name"));
-		user.setTel(req.getParameter("tel"));
-		user.setBirth(req.getParameter("birth"));
-		user.setFilename(req.getParameter("filename"));
-		user.setIp(req.getRemoteAddr());
-		
-		if (filename != null && !filename.equals("")) {
-			String uploadPath = req.getRealPath("/")+"userSave"; // 작대기 그어진 거 신경쓰지말기. 이클립스에서 쓰지않았음 좋겠다는 표시를 해주는 것 뿐.
+		if (filename0 != null && !filename0.equals("")) {
+			String uploadPath = req.getRealPath("/")+"fileSave"; // 작대기 그어진 거 신경쓰지말기. 이클립스에서 쓰지않았음 좋겠다는 표시를 해주는 것 뿐.
 			System.out.println("업로드 경로: " + uploadPath);
-			FileCopyUtils.copy(multi.getInputStream(), new FileOutputStream(uploadPath+"/"+multi.getOriginalFilename()));
-			user.setFilename(filename);
-			user.setFilesize((int)multi.getSize());
-		}/* else {
+			FileCopyUtils.copy(multi0.getInputStream(), new FileOutputStream(uploadPath+"/"+multi0.getOriginalFilename()));
+			diary.setFilename0(filename0);
+			diary.setFilesize0((int)multi0.getSize());
+		}
+		if (filename1 != null && !filename1.equals("")) {
+			String uploadPath = req.getRealPath("/")+"fileSave";
+			FileCopyUtils.copy(multi1.getInputStream(), new FileOutputStream(uploadPath+"/"+multi1.getOriginalFilename()));
+			diary.setFilename1(filename1);
+			diary.setFilesize1((int)multi1.getSize());
+		}
+		if (filename2 != null && !filename2.equals("")) {
+			String uploadPath = req.getRealPath("/")+"fileSave";
+			FileCopyUtils.copy(multi2.getInputStream(), new FileOutputStream(uploadPath+"/"+multi2.getOriginalFilename()));
+			diary.setFilename2(filename2);
+			diary.setFilesize2((int)multi2.getSize());
+		}
+		if (filename3 != null && !filename3.equals("")) {
+			String uploadPath = req.getRealPath("/")+"fileSave";
+			FileCopyUtils.copy(multi3.getInputStream(), new FileOutputStream(uploadPath+"/"+multi3.getOriginalFilename()));
+			diary.setFilename3(filename3);
+			diary.setFilesize3((int)multi3.getSize());
+		}
+		if (filename4 != null && !filename4.equals("")) {
+			String uploadPath = req.getRealPath("/")+"fileSave";
+			FileCopyUtils.copy(multi4.getInputStream(), new FileOutputStream(uploadPath+"/"+multi4.getOriginalFilename()));
+			diary.setFilename4(filename4);
+			diary.setFilesize4((int)multi4.getSize());
+		} else {}
+		/* else {
 			user.setFilename("");
 			user.setFilesize(0);
 		}*/
-			 
 		
-		System.out.println(user);
-		int chk = usPro.updateUser(user);
-		
-		System.out.println("수정여부: " + chk);
+		int chk = dbPro.updateDiary(diary);
 		
 		model.addAttribute("chk", chk);
 		model.addAttribute("pageNum", pageNum);
-		model.addAttribute("user", user);
+		model.addAttribute("diaryid", diaryid);
 		
+		System.out.println("수정여부: " + chk);
 		
-		/*DiaryDataBean diary = new DiaryDataBean();
-		DiaryDBMyBatis diaPro = DiaryDBMyBatis.getInstance();
+		System.out.println(diary);
 		
-		// 6) fileSave 폴더 webcontent폴더 안에 만들기
-		String realFolder = ""; //웹 어플리케이션상의 절대경로
-		String encType = "euc-kr"; // 인코딩 타입
-		int maxSize = 5 *1024 * 1024; // 최대 업로드 될 파일 크기 .. 5MB
-		ServletContext context = req.getServletContext();
-		realFolder =context.getRealPath("fileSave");
-		MultipartRequest multi = null;
-		
-		// DefaultFileRenamePolicy는 중복된 파일 업로드할때 자동으로 Rename / aaa있으면 aaa(1)로
-		multi = new MultipartRequest(req, realFolder, maxSize, encType,  new DefaultFileRenamePolicy());
-		
-		Enumeration files = multi.getFileNames();
-		String[] filename = new String[5];
-		File[] file = new File[5];
-		int index = 0;
-		
-		String[] original = new String[5];
-		String[] type = new String[5];
-		
-		// 7) 
-		while (files.hasMoreElements()) { // 만약 파일이 다수면 if를 while로..
-			String name = (String) files.nextElement();
-			filename[index] = multi.getFilesystemName(name);
-			original[index] = multi.getOriginalFileName(name);
-			type[index] = multi.getContentType(name);
-			file[index] = multi.getFile(name);
-			index++;
-		}
-		
-		int num = Integer.parseInt(multi.getParameter("num"));
-		
-		String pageNum = multi.getParameter("pageNum");
-		if (pageNum == null || pageNum == "") {pageNum = "1";}
-		
-		String diaryid = multi.getParameter("diaryid");
-		if (diaryid==null) diaryid = "Main";
-		
-		try {
-			diary.setNum(num);
-			diary.setEmail(multi.getParameter("email"));
-			diary.setSubject(multi.getParameter("subject"));
-			diary.setContent(multi.getParameter("content"));
-			diary.setDiaryid(multi.getParameter("diaryid"));
-			diary.setFilename0(multi.getParameter("filename0"));
-			diary.setFilename1(multi.getParameter("filename1"));
-			diary.setFilename2(multi.getParameter("filename2"));
-			diary.setFilename3(multi.getParameter("filename3"));
-			diary.setFilename4(multi.getParameter("filename4"));
-			diary.setIp(req.getRemoteAddr());
-			
-			if (file[4] != null) {
-				diary.setFilename0(filename[4]);
-				diary.setFilesize0((int) file[4].length()); 
-				
-			} 
-			
-			if (file[3] != null) {
-				diary.setFilename1(filename[3]);
-				diary.setFilesize1((int) file[3].length()); 
-				
-			} 
-			
-			if (file[2] != null) {
-				diary.setFilename2(filename[2]);
-				diary.setFilesize2((int) file[2].length()); 
-				
-			}
-			
-			if (file[1] != null) {
-				diary.setFilename3(filename[1]);
-				diary.setFilesize3((int) file[1].length()); 
-				
-			} 
-			
-			if (file[0] != null) {
-				diary.setFilename4(filename[0]);
-				diary.setFilesize4((int) file[0].length()); 
-				
-			} else {}
-			
-			int chk = diaPro.updateDiary(diary);
-			
-			req.setAttribute("chk", chk);
-			req.setAttribute("pageNum", pageNum);
-			req.setAttribute("diaryid", diaryid);
-			
-			System.out.println("수정여부: " + chk);
-			System.out.println(diary);
-			
-			
-		} catch (Exception e) {e.printStackTrace();}*/
-			
 		return "view/user_updateDPro";
 	}
-	/*	
-	// 유저 - 일기 삭제 전송	
-	public String user_deleteDPro(HttpServletRequest req, HttpServletResponse res)  throws Throwable { 
+	
+	// 유저 - 일기 삭제 전송
+	@RequestMapping(value = "user_deleteDPro")
+	public ModelAndView user_deleteDPro(HttpServletRequest req)  throws Throwable { 
+		ModelAndView mv = new ModelAndView();
+		
 		HttpSession session = req.getSession();
 		
 		String diaryid = req.getParameter("diaryid");
 		String pageNum = req.getParameter("pageNum");
 		if (pageNum == null || pageNum == "") {pageNum = "1";}
+		
 		int num = Integer.parseInt(req.getParameter("num"));
 		
-		DiaryDBMyBatis dbPro = DiaryDBMyBatis.getInstance();
 		
 		int check = dbPro.deleteDiary(num, (String)session.getAttribute("sessionID"), diaryid);
 		
-		req.setAttribute("check", check);
+		System.out.println("삭제여부: " + check);
 		
-		return "/Project/view/user_deleteDPro.jsp"; 
-	} 
+		mv.addObject("check", check);
+		mv.addObject("pageNum", pageNum);
+		mv.setViewName("view/user_deleteDPro");
+
+		return mv; 
+	}
 	
 	// 유저 - 일기 쓰기 폼 
-	public String user_write(HttpServletRequest req, HttpServletResponse res)  throws Throwable { 
+	@RequestMapping("/user_write")
+	public String user_write(Model model, HttpServletRequest req)  throws Throwable { 
 		String subject = req.getParameter("subject");
-	    System.out.println("제목:"+subject);
-	    
-	    int num=0;
 		String diaryid = req.getParameter("diaryid");
+		int num=0;
+		 
+		System.out.println("제목:"+subject);
 		
 		if (diaryid==null) diaryid = "Main";
 		if (subject==null) subject = "제목없음";
 
 		if (req.getParameter("num")!=null) {num = Integer.parseInt(req.getParameter("num"));}
 		
-		req.setAttribute("diaryid", diaryid);
-		req.setAttribute("subject", subject);
+		model.addAttribute("diaryid", diaryid);
+		model.addAttribute("subject", subject);
+		model.addAttribute("num", num);
 		
-		return  "/Project/view/user_write.jsp"; 
+		return  "view/user_write"; 
 	}
 	
 	// 유저 - 일기 쓰기 폼 전송 (사진 다수)
-	public String user_writePro(HttpServletRequest req, HttpServletResponse res)  throws Throwable {
+	@RequestMapping("/user_writePro")
+	public ModelAndView user_writePro(MultipartHttpServletRequest req)  throws Throwable {
 		HttpSession session = req.getSession();
+		ModelAndView mv = new ModelAndView();
+		
 		DiaryDataBean diary = new DiaryDataBean();
-		DiaryDBMyBatis dbPro = DiaryDBMyBatis.getInstance();
 		
-		// 6) fileSave 폴더 webcontent폴더 안에 만들기
-		String realFolder = ""; // 웹 어플리케이션상의 절대경로
-		String encType = "euc-kr"; // 인코딩 타입
-		int maxSize = 5 * 1024 * 1024; // 최대 업로드 될 파일 크기 .. 5MB
-		ServletContext context = req.getServletContext();
-		realFolder = context.getRealPath("fileSave");
-		MultipartRequest multi = null;
-
-		// DefaultFileRenamePolicy는 중복된 파일 업로드할때 자동으로 Rename / aaa있으면 aaa(1)로
-		multi = new MultipartRequest(req, realFolder, maxSize, encType, new DefaultFileRenamePolicy());
-
-		Enumeration files = multi.getFileNames();
-		String[] filename = new String[5];
-		File[] file = new File[5];
-		int index = 0;
+		//int num = Integer.parseInt(req.getParameter("num"));
 		
-		String[] original = new String[5];
-		String[] type = new String[5];
-		
-		// 7) 
-		while (files.hasMoreElements()) { // 만약 파일이 다수면 if를 while로..
-			String name = (String) files.nextElement();
-			filename[index] = multi.getFilesystemName(name);
-			original[index] = multi.getOriginalFileName(name);
-			type[index] = multi.getContentType(name);
-			file[index] = multi.getFile(name);
-			index++;
-		}
-		// =================================================
-		
-		String pageNum = multi.getParameter("pageNum");
+		String pageNum = req.getParameter("pageNum");
 		if (pageNum == null || pageNum == "") {pageNum = "1";}
 		
-		String diaryid = multi.getParameter("diaryid");
+		String diaryid = req.getParameter("diaryid");
 		if (diaryid==null) diaryid = "Main";
-		
-		//diary.setNum(num);
-		diary.setEmail((String)session.getAttribute("sessionID")); 
-		diary.setSubject(multi.getParameter("subject"));
-		diary.setContent(multi.getParameter("content"));
-		diary.setDiaryid(multi.getParameter("diaryid"));
-		diary.setIp(req.getRemoteAddr());
-		
-		// 8)
-		if (file[4] != null) {
-			diary.setFilename0(filename[4]);
-			diary.setFilesize0((int) file[4].length()); 
-			
-		} 
-		
-		if (file[3] != null) {
-			diary.setFilename1(filename[3]);
-			diary.setFilesize1((int) file[3].length()); 
-			
-		} 
-		
-		if (file[2] != null) {
-			diary.setFilename2(filename[2]);
-			diary.setFilesize2((int) file[2].length()); 
-			
-		}
-		
-		if (file[1] != null) {
-			diary.setFilename3(filename[1]);
-			diary.setFilesize3((int) file[1].length()); 
-			
-		} 
-		
-		if (file[0] != null) {
-			diary.setFilename4(filename[0]);
-			diary.setFilesize4((int) file[0].length()); 
-			
-		} 
-			
-		// =================================================
-		
-		System.out.println(diary);
-		//9) insertDiary 메소드 수정 (복수 개로 할시 필수 수정)
-		dbPro.insertDiary(diary);
-		
-		req.setAttribute("pageNum", pageNum);
-		res.sendRedirect("user_main?pageNum="+pageNum+"&diaryid="+diaryid);
-		
-		return null;
-	}
 	
+		//ModelAndView mv = new ModelAndView();
+		MultipartFile multi0 = req.getFile("filename0");
+		String filename0 = multi0.getOriginalFilename();
+		MultipartFile multi1 = req.getFile("filename1");
+		String filename1 = multi1.getOriginalFilename();
+		MultipartFile multi2 = req.getFile("filename2");
+		String filename2 = multi2.getOriginalFilename();
+		MultipartFile multi3 = req.getFile("filename3");
+		String filename3 = multi3.getOriginalFilename();
+		MultipartFile multi4 = req.getFile("filename4");
+		String filename4 = multi4.getOriginalFilename();
+		System.out.println("일기 이미지1: "+filename0+"\n" + "일기 이미지2: "+filename1+"\n" + "일기 이미지3: "+filename2+"\n"
+				+"일기 이미지4: "+filename3+"\n" + "일기 이미지5: "+filename4+"\n");
+		
+		diary.setNum(Integer.parseInt(req.getParameter("num")));
+		diary.setEmail((String)session.getAttribute("sessionID"));
+		diary.setSubject(req.getParameter("subject"));
+		diary.setContent(req.getParameter("content"));
+		diary.setDiaryid(req.getParameter("diaryid"));
+		diary.setIp(req.getRemoteAddr());
+		/*diary.setFilename0(req.getParameter("filename0"));
+		diary.setFilename1(req.getParameter("filename1"));
+		diary.setFilename2(req.getParameter("filename2"));
+		diary.setFilename3(req.getParameter("filename3"));
+		diary.setFilename4(req.getParameter("filename4"));*/
+		
+		if (filename0 != null && !filename0.equals("")) {
+			String uploadPath = req.getRealPath("/")+"fileSave"; // 작대기 그어진 거 신경쓰지말기. 이클립스에서 쓰지않았음 좋겠다는 표시를 해주는 것 뿐.
+			System.out.println("업로드 경로: " + uploadPath);
+			FileCopyUtils.copy(multi0.getInputStream(), new FileOutputStream(uploadPath+"/"+multi0.getOriginalFilename()));
+			diary.setFilename0(filename0);
+			diary.setFilesize0((int)multi0.getSize());
+		}
+		if (filename1 != null && !filename1.equals("")) {
+			String uploadPath = req.getRealPath("/")+"fileSave";
+			FileCopyUtils.copy(multi1.getInputStream(), new FileOutputStream(uploadPath+"/"+multi1.getOriginalFilename()));
+			diary.setFilename1(filename1);
+			diary.setFilesize1((int)multi1.getSize());
+		}
+		if (filename2 != null && !filename2.equals("")) {
+			String uploadPath = req.getRealPath("/")+"fileSave";
+			FileCopyUtils.copy(multi2.getInputStream(), new FileOutputStream(uploadPath+"/"+multi2.getOriginalFilename()));
+			diary.setFilename2(filename2);
+			diary.setFilesize2((int)multi2.getSize());
+		}
+		if (filename3 != null && !filename3.equals("")) {
+			String uploadPath = req.getRealPath("/")+"fileSave";
+			FileCopyUtils.copy(multi3.getInputStream(), new FileOutputStream(uploadPath+"/"+multi3.getOriginalFilename()));
+			diary.setFilename3(filename3);
+			diary.setFilesize3((int)multi3.getSize());
+		}
+		if (filename4 != null && !filename4.equals("")) {
+			String uploadPath = req.getRealPath("/")+"fileSave";
+			FileCopyUtils.copy(multi4.getInputStream(), new FileOutputStream(uploadPath+"/"+multi4.getOriginalFilename()));
+			diary.setFilename4(filename4);
+			diary.setFilesize4((int)multi4.getSize());
+		} else {}
+		/* else {
+			user.setFilename("");
+			user.setFilesize(0);
+		}*/
+		dbPro.insertDiary(diary);
+
+		mv.addObject("pageNum", pageNum);
+		//mv.setViewName("view/user_main?pageNum="+pageNum+"&diaryid="+diaryid);
+		mv.setViewName("view/user_main?pageNum="+pageNum);
+		
+		System.out.println("====writePro====\n"+diary+"\n==============");
+		
+		return mv;
+	}
+	/*
 	// 유저 - 콘텐츠 (갤러리에서 이동)
 	public String user_content(HttpServletRequest req, HttpServletResponse res)  throws Throwable {
 		HttpSession session = req.getSession();
