@@ -9,9 +9,11 @@
 </head>
 <body>
 	<c:if test="${chk==1}">
+		<input type="hidden" name="filename" value="${user.filename}">
+		<input type="hidden" name="pageNum" value="${pageNum}">
 		<script type="text/javascript">
 			alert("수정 완료");
-			// 수정하기! location.href="${pageContext.request.contextPath}/admin/accountList";
+			location.href="${pageContext.request.contextPath}/admin/accountList?pageNum=${pageNum}";
 		</script>
 		<meta http-equiv="Refresh" content="0;url=updateUserForm?email=${email}&pwd=${pwd}&pageNum=${pageNum}">
 	</c:if>

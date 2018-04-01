@@ -42,12 +42,21 @@ public class StoryController {
 	
 	// 유저 - 회원가입 전송
 	@RequestMapping("/accountPro")
-	public String accountPro(MultipartHttpServletRequest req, UserDataBean user, Model model)  throws Exception { 
-		ModelAndView mv = new ModelAndView();
+	public String accountPro(Model model, MultipartHttpServletRequest req)  throws Exception { 
+		//ModelAndView mv = new ModelAndView();
 		
 		MultipartFile multi = req.getFile("filename");
 		String filename = multi.getOriginalFilename();
 		System.out.println("유저 파일 업로드: "+filename);
+		
+		UserDataBean user = new UserDataBean();
+		
+		user.setEmail(req.getParameter("email"));
+		user.setPwd(req.getParameter("pwd"));
+		user.setName(req.getParameter("name"));
+		user.setBirth(req.getParameter("birth"));
+		user.setTel(req.getParameter("tel"));
+		user.setIp(req.getRemoteAddr());
 		
 		if (filename != null && !filename.equals("")) {
 			String uploadPath = req.getRealPath("/")+"userSave";
@@ -59,12 +68,6 @@ public class StoryController {
 			user.setFilename("");
 			user.setFilesize(0);
 		}
-		/*user.setEmail(req.getParameter("email"));
-		user.setPwd(req.getParameter("pwd"));
-		user.setName(req.getParameter("name"));
-		user.setBirth(req.getParameter("birth"));
-		user.setTel(req.getParameter("tel"));*/
-		user.setIp(req.getRemoteAddr());
 		
 		System.out.println(user);
 		

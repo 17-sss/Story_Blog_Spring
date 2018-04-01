@@ -4,6 +4,8 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -30,13 +32,19 @@ public class AdminController {
 	// 관리자 유저관리
 	// /admin/accountList
 	@RequestMapping("/accountList")
-	public String accountList(Model model) throws Exception {
-		int pageSize = 10;
+	public String accountList(Model model, HttpServletRequest req) throws Exception {
+		int pageSize = 5;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		/*String pageNum = request.getParameter("pageNum");
+		String pageNum = req.getParameter("pageNum");
 		if (pageNum == null || pageNum == "") {
 			pageNum = "1";
+		}
+		/*// 임시로 무조건 1페이지로 가게해둠..
+		int currentPage = 1;
+		if(!"".equals(pageNum)){
+		   currentPage = Integer.parseInt(pageNum);
 		}*/
+		// end. 임시 1페이지
 		int currentPage = Integer.parseInt(pageNum);
 		int startRow = (currentPage - 1) * pageSize + 1;
 		int endRow = currentPage * pageSize;
@@ -77,10 +85,11 @@ public class AdminController {
 	public String updateUserForm(String email, String pwd, Model model) throws Exception {
 		/*String email = req.getParameter("email");
 		String pwd = req.getParameter("pwd");*/
-
+		
 		UserDataBean user = usPro.getUser(email, pwd);
 		
 		model.addAttribute("user", user);
+		model.addAttribute("pageNum", pageNum);
 		
 		return "/admin/updateUserForm";
 	}
@@ -88,35 +97,37 @@ public class AdminController {
 	// 관리자 유저수정(Pro)
 	// /admin/updateUserPro
 	@RequestMapping("/updateUserPro")
-	public String updateUserPro(Model model, MultipartHttpServletRequest request) throws Exception {
-		String pageNum = request.getParameter("pageNum");
+	public String updateUserPro(Model model, MultipartHttpServletRequest req) throws Exception {
+		String pageNum = req.getParameter("pageNum");
 		if (pageNum == null || pageNum == "") {
 			pageNum = "1";
 		}
-		UserDataBean user = new UserDataBean();
+	
 		//ModelAndView mv = new ModelAndView();
-		MultipartFile multi = request.getFile("filename");
+		MultipartFile multi = req.getFile("filename");
 		String filename = multi.getOriginalFilename();
 		System.out.println("유저 수정 이미지: "+filename);
 		
-		user.setEmail(request.getParameter("email"));
-		user.setPwd(request.getParameter("pwd"));
-		user.setName(request.getParameter("name"));
-		user.setTel(request.getParameter("tel"));
-		user.setBirth(request.getParameter("birth"));
-		user.setFilename(request.getParameter("filename"));
-		user.setIp(request.getRemoteAddr());
+		UserDataBean user = new UserDataBean();
+		
+		user.setEmail(req.getParameter("email"));
+		user.setPwd(req.getParameter("pwd"));
+		user.setName(req.getParameter("name"));
+		user.setTel(req.getParameter("tel"));
+		user.setBirth(req.getParameter("birth"));
+		user.setFilename(req.getParameter("filename"));
+		user.setIp(req.getRemoteAddr());
 		
 		if (filename != null && !filename.equals("")) {
-			String uploadPath = request.getRealPath("/")+"userSave"; // 작대기 그어진 거 신경쓰지말기. 이클립스에서 쓰지않았음 좋겠다는 표시를 해주는 것 뿐.
-			System.out.println(uploadPath);
+			String uploadPath = req.getRealPath("/")+"userSave"; // 작대기 그어진 거 신경쓰지말기. 이클립스에서 쓰지않았음 좋겠다는 표시를 해주는 것 뿐.
+			System.out.println("업로드 경로: " + uploadPath);
 			FileCopyUtils.copy(multi.getInputStream(), new FileOutputStream(uploadPath+"/"+multi.getOriginalFilename()));
 			user.setFilename(filename);
 			user.setFilesize((int)multi.getSize());
-		} else {
+		}/* else {
 			user.setFilename("");
 			user.setFilesize(0);
-		}
+		}*/
 			 
 		
 		System.out.println(user);
@@ -126,6 +137,7 @@ public class AdminController {
 		
 		model.addAttribute("chk", chk);
 		model.addAttribute("pageNum", pageNum);
+		model.addAttribute("user", user);
 
 
 		
