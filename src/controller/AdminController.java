@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.db.UserDBMyBatis;
 import com.db.UserDataBean;
@@ -144,10 +145,26 @@ public class AdminController {
 		return "/admin/updateUserPro";
 	}
 
-	
-	/*// /admin/deleteUserPro
-	public String deleteUserPro(HttpServletRequest req, HttpServletResponse res) throws Throwable {
-		UserDataBean user = new UserDataBean();
+	// 包府磊 蜡历昏力(Pro)
+    // /admin/deleteUserPro
+	@RequestMapping(value = "deleteUserPro")
+	public ModelAndView deleteUserPro(String email, String pwd,  HttpServletRequest req) throws Throwable {
+		ModelAndView mv = new ModelAndView();
+		
+		String pageNum = req.getParameter("pageNum");
+		if (pageNum == null || pageNum == "") {
+			pageNum = "1";
+		}
+		
+		int check = usPro.deleteUser(email, pwd);
+		
+		System.out.println("昏力咯何: " + check);
+		
+		mv.addObject("check", check);
+		mv.addObject("pageNum",pageNum);
+		mv.setViewName("/admin/deleteUserPro");
+		
+		/*UserDataBean user = new UserDataBean();
 
 		String pageNum = req.getParameter("pageNum");
 		if (pageNum == null || pageNum == "") {
@@ -170,9 +187,8 @@ public class AdminController {
 
 		req.setAttribute("pwd", pwd);
 		req.setAttribute("email", email);
-		req.setAttribute("check", check);
+		req.setAttribute("check", check);*/
 
-		return "/Project/admin/deleteUserPro.jsp";
+		return mv;
 	}
-*/
 }
