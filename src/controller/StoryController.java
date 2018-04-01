@@ -1,8 +1,11 @@
 package controller;
 
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.db.DiaryDBMyBatis;
+import com.db.DiaryDataBean;
 import com.db.UserDBMyBatis;
 import com.db.UserDataBean;
 
@@ -19,10 +24,12 @@ import com.db.UserDataBean;
 @RequestMapping("/story")
 public class StoryController {
 	UserDBMyBatis usPro = UserDBMyBatis.getInstance();
+	DiaryDBMyBatis dbPro = DiaryDBMyBatis.getInstance();
 
 	
 	@RequestMapping("/index")
-	public String index(HttpServletRequest req) { 
+	public String index(HttpServletRequest req) {
+		System.out.println("기본 경로 테스트: "+req.getContextPath());
 		/*String msg= req.getParameter("msg");
         
         if(msg!=null && msg.equals("0")) {
@@ -35,9 +42,9 @@ public class StoryController {
 	}
 	
 	// 유저 - 회원가입
-	@RequestMapping("/accountForm")
+	@RequestMapping("/accountForm") //url 매핑
 	public String accountForm() { 
-		return "accountForm"; 
+		return "accountForm";  // jsp파일
 	} 
 	
 	// 유저 - 회원가입 전송
@@ -76,30 +83,30 @@ public class StoryController {
 		return "redirect:index";
 	} 
 	
-	/*// 유저 - 이메일 확인
-	public String confirmEmail (HttpServletRequest req,HttpServletResponse res)  throws Throwable { 
+	// 유저 - 이메일 확인  <<이메일 같을 시 에러..>>
+	@RequestMapping("/confirmEmail")
+	public String confirmEmail (HttpServletRequest req, Model model)  throws Throwable { 
 		String email = req.getParameter("email"); 
-		UserDBMyBatis dbPro = UserDBMyBatis.getInstance();
-		boolean result = dbPro.confirmEmail(email);
-		req.setAttribute("result", result);
-		req.setAttribute("email", email);
+		boolean result = usPro.confirmEmail(email);
+		model.addAttribute("result", result);
+		model.addAttribute("email", email);
 		
-		return  "/Project/confirmEmail.jsp"; 
+		return  "confirmEmail"; 
 	}
 	
-	// 유저 - 로그인 <<MyBatis 보류>>
-	public String LoginPro(HttpServletRequest req, HttpServletResponse res)  throws Throwable { 
+	// 유저 - 로그인 
+	@RequestMapping("/LoginPro")
+	public String LoginPro(HttpServletRequest req, ModelAndView mv)  throws Throwable { 
 		 // 로그인 화면에 입력된 아이디와 비밀번호를 가져온다
-		HttpSession  session = req.getSession();
+		HttpSession session = req.getSession();
 		
 		String email= req.getParameter("email");
         String pwd = req.getParameter("pwd");
         System.out.println("LoginPro=============");
      	
         // DB에서 아이디, 비밀번호 확인
-        UserDBMyBatis dbPro = UserDBMyBatis.getInstance();
-        System.out.println(email +" "+ pwd);
-        int check = dbPro.loginCheck(email, pwd);
+        System.out.println("입력 email: " + email +"\n입력 pwd: "+ pwd);
+        int check = usPro.loginCheck(email, pwd);
         
         UserDataBean user = new UserDataBean();
        
@@ -111,36 +118,41 @@ public class StoryController {
             // 세션에 현재 아이디 세팅
         	session.setAttribute("sessionID", email);
         	// 유저 정보 가져와서 헤더에 뿌려주기.
-        	user=dbPro.getUser(email);
+        	user=usPro.getUser(email);
             session.setAttribute("name", user.getName());
             session.setAttribute("filename", user.getFilename());
-			msg = req.getContextPath()+"/story/head";
+			msg = "/story/user_main";
+			System.out.println("loginPro 진입완료");
         }
         else if(check == 0) // 비밀번호가 틀릴경우
         {
-            msg = req.getContextPath()+"/story/index?msg=0";
+            msg = "/story/index?msg=0";
         }
         else    // 아이디가 틀릴경우
         {
-            msg = req.getContextPath()+"/story/index?msg=-1";
+            msg = "/story/index?msg=-1";
         }
-        res.sendRedirect(msg);
+       
+        mv.setViewName(msg);
         
-        return null;
+        return "redirect:"+msg;
 	}
 	
 	// 유저 - 로그아웃
-	public String LogoutPro(HttpServletRequest req, HttpServletResponse res)  throws Throwable {
+	@RequestMapping("/LogoutPro")
+	public ModelAndView LogoutPro(HttpServletRequest req, ModelAndView mv)  throws Throwable {
 		
 	    HttpSession  session = req.getSession();
 		
 	    session.invalidate(); // 모든세션정보 삭제
-	    res.sendRedirect("index"); // 로그인 화면으로 다시 돌아간다.
-		return null;
+	    mv.setViewName("index"); // 로그인 화면으로 다시 돌아간다.
+	    
+		return mv;
 	}
 	
 	// 유저 - 메인
-	public String user_main (HttpServletRequest req, HttpServletResponse res)  throws Throwable {
+	@RequestMapping("/user_main")
+	public String user_main (HttpServletRequest req, Model model)  throws Throwable {
 		HttpSession session = req.getSession();
 		
 		String diaryid = req.getParameter("diaryid");
@@ -164,7 +176,7 @@ public class StoryController {
 		int count = 0;
 		int number = 0;
 		List diaryList = null;
-		DiaryDBMyBatis dbPro = DiaryDBMyBatis.getInstance();
+		
 		count = dbPro.getDiaryCount(diaryid, (String)session.getAttribute("sessionID"));
 		//게시판에 있는 글 수 count
 		if (count > 0) {
@@ -181,22 +193,23 @@ public class StoryController {
 		
 		if (endPage > pageCount) endPage = pageCount;
 		
-		req.setAttribute("subject", subject);
-		req.setAttribute("diaryid", diaryid);
-		req.setAttribute("count", count);
-		req.setAttribute("diaryList", diaryList);
-		req.setAttribute("currentPage", currentPage);
-		req.setAttribute("startPage", startPage);
-		req.setAttribute("bottomLine", bottomLine);
-		req.setAttribute("pageCount", pageCount);
-		req.setAttribute("number", number);
-		req.setAttribute("endPage", endPage);
+		model.addAttribute("subject", subject);
+		model.addAttribute("diaryid", diaryid);
+		model.addAttribute("count", count);
+		model.addAttribute("diaryList", diaryList);
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("bottomLine", bottomLine);
+		model.addAttribute("pageCount", pageCount);
+		model.addAttribute("number", number);
+		model.addAttribute("endPage", endPage);
 		
-		return "/Project/view/user_main.jsp";
+		return "view/user_main";
 	}
 	
 	// 유저 - 갤러리
-	public String user_gallery (HttpServletRequest req, HttpServletResponse res)  throws Throwable {
+	@RequestMapping("/user_gallery")
+	public String user_gallery (HttpServletRequest req, Model model)  throws Throwable {
 		HttpSession session = req.getSession();
 		
 		String diaryid = req.getParameter("diaryid");
@@ -221,7 +234,6 @@ public class StoryController {
 		int countT = 0;
 		int number = 0;
 		List diaryList = null;
-		DiaryDBMyBatis dbPro = DiaryDBMyBatis.getInstance();
 		count = dbPro.getDiaryCount(diaryid, (String)session.getAttribute("sessionID"));
 		countT = dbPro.getImgDiaryCountTotal(diaryid, (String)session.getAttribute("sessionID"));
 		//게시판에 있는 글 수 count
@@ -239,23 +251,24 @@ public class StoryController {
 		
 		if (endPage > pageCount) endPage = pageCount;
 		
-		req.setAttribute("subject", subject);
-		req.setAttribute("diaryid", diaryid);
-		req.setAttribute("count", count);
-		req.setAttribute("countT", countT);
-		req.setAttribute("diaryList", diaryList);
-		req.setAttribute("currentPage", currentPage);
-		req.setAttribute("startPage", startPage);
-		req.setAttribute("bottomLine", bottomLine);
-		req.setAttribute("pageCount", pageCount);
-		req.setAttribute("number", number);
-		req.setAttribute("endPage", endPage);
+		model.addAttribute("subject", subject);
+		model.addAttribute("diaryid", diaryid);
+		model.addAttribute("count", count);
+		model.addAttribute("countT", countT);
+		model.addAttribute("diaryList", diaryList);
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("bottomLine", bottomLine);
+		model.addAttribute("pageCount", pageCount);
+		model.addAttribute("number", number);
+		model.addAttribute("endPage", endPage);
 	
-		return "/Project/view/user_gallery.jsp";
+		return "view/user_gallery";
 	}
 	
 	// 유저 - 타임라인
-	public String user_timeline (HttpServletRequest req, HttpServletResponse res)  throws Throwable {
+	@RequestMapping("/user_timeline")
+	public String user_timeline (HttpServletRequest req, Model model)  throws Throwable {
 		HttpSession session = req.getSession();
 		
 		String diaryid = req.getParameter("diaryid");
@@ -266,7 +279,7 @@ public class StoryController {
 		
 		
 		int pageSize= 5;
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String pageNum = req.getParameter("pageNum");
 		if (pageNum == null || pageNum =="") {
 			pageNum = "1";
@@ -279,7 +292,6 @@ public class StoryController {
 		int count = 0;
 		int number = 0;
 		List diaryList = null;
-		DiaryDBMyBatis dbPro = DiaryDBMyBatis.getInstance();
 		count = dbPro.getDiaryCount(diaryid, (String)session.getAttribute("sessionID"));
 		//게시판에 있는 글 수 count
 		if (count > 0) {
@@ -296,46 +308,91 @@ public class StoryController {
 		
 		if (endPage > pageCount) endPage = pageCount;
 		
-		req.setAttribute("subject", subject);
-		req.setAttribute("diaryid", diaryid);
-		req.setAttribute("count", count);
-		req.setAttribute("diaryList", diaryList);
-		req.setAttribute("currentPage", currentPage);
-		req.setAttribute("startPage", startPage);
-		req.setAttribute("bottomLine", bottomLine);
-		req.setAttribute("pageCount", pageCount);
-		req.setAttribute("number", number);
-		req.setAttribute("endPage", endPage);
+		model.addAttribute("subject", subject);
+		model.addAttribute("diaryid", diaryid);
+		model.addAttribute("count", count);
+		model.addAttribute("diaryList", diaryList);
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("bottomLine", bottomLine);
+		model.addAttribute("pageCount", pageCount);
+		model.addAttribute("number", number);
+		model.addAttribute("endPage", endPage);
 		
-		return "/Project/view/user_timeline.jsp";
+		return "view/user_timeline";
 	}
 	
 	// 유저 - 일기 수정 폼
-	public String user_updateDForm(HttpServletRequest req, HttpServletResponse res)  throws Throwable { 
+	@RequestMapping("/user_updateDForm")
+	public String user_updateDForm(HttpServletRequest req, Model model)  throws Throwable { 
 		HttpSession session = req.getSession();
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String diaryid = req.getParameter("diaryid");
 		if (diaryid==null) diaryid="Main";
 		String pageNum = req.getParameter("pageNum");
-			if (pageNum == null || pageNum == "") { 
-				pageNum = "1"; 
-			}
+		if (pageNum == null || pageNum == "") { pageNum = "1"; }
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		
 		int num = Integer.parseInt(req.getParameter("num"));
 		
 		try {
-			DiaryDBMyBatis diaryPro = DiaryDBMyBatis.getInstance();
-			DiaryDataBean diary = diaryPro.getDiary(num, (String)session.getAttribute("sessionID"), diaryid);
+			DiaryDataBean diary = dbPro.getDiary(num, (String)session.getAttribute("sessionID"), diaryid);
 			
-			req.setAttribute("pageNum", pageNum); 
-			req.setAttribute("diary", diary); 
+			model.addAttribute("pageNum", pageNum); 
+			model.addAttribute("diary", diary); 
 		} catch (Exception e) {}
-		return "/Project/view/user_updateDForm.jsp"; 
+		
+		return "view/user_updateDForm"; 
 	}
 	
-	// 일기 수정 전송 - 파일 업로드
-	public String user_updateDPro(HttpServletRequest req, HttpServletResponse res)  throws Throwable {
-		DiaryDataBean diary = new DiaryDataBean();
+	// 일기 수정 전송 - 파일 업로드 (수정요망)
+	@RequestMapping("/user_updateDPro")
+	public String user_updateDPro(Model model, MultipartHttpServletRequest req)  throws Throwable {
+		String pageNum = req.getParameter("pageNum");
+		
+		if (pageNum == null || pageNum == "") {
+			pageNum = "1";
+		}
+	
+		//ModelAndView mv = new ModelAndView();
+		MultipartFile multi = req.getFile("filename");
+		String filename = multi.getOriginalFilename();
+		System.out.println("유저 수정 이미지: "+filename+"\n");
+		
+		UserDataBean user = new UserDataBean();
+		
+		user.setEmail(req.getParameter("email"));
+		user.setPwd(req.getParameter("pwd"));
+		user.setName(req.getParameter("name"));
+		user.setTel(req.getParameter("tel"));
+		user.setBirth(req.getParameter("birth"));
+		user.setFilename(req.getParameter("filename"));
+		user.setIp(req.getRemoteAddr());
+		
+		if (filename != null && !filename.equals("")) {
+			String uploadPath = req.getRealPath("/")+"userSave"; // 작대기 그어진 거 신경쓰지말기. 이클립스에서 쓰지않았음 좋겠다는 표시를 해주는 것 뿐.
+			System.out.println("업로드 경로: " + uploadPath);
+			FileCopyUtils.copy(multi.getInputStream(), new FileOutputStream(uploadPath+"/"+multi.getOriginalFilename()));
+			user.setFilename(filename);
+			user.setFilesize((int)multi.getSize());
+		}/* else {
+			user.setFilename("");
+			user.setFilesize(0);
+		}*/
+			 
+		
+		System.out.println(user);
+		int chk = usPro.updateUser(user);
+		
+		System.out.println("수정여부: " + chk);
+		
+		model.addAttribute("chk", chk);
+		model.addAttribute("pageNum", pageNum);
+		model.addAttribute("user", user);
+		
+		
+		/*DiaryDataBean diary = new DiaryDataBean();
 		DiaryDBMyBatis diaPro = DiaryDBMyBatis.getInstance();
 		
 		// 6) fileSave 폴더 webcontent폴더 안에 만들기
@@ -428,11 +485,11 @@ public class StoryController {
 			System.out.println(diary);
 			
 			
-		} catch (Exception e) {e.printStackTrace();}
+		} catch (Exception e) {e.printStackTrace();}*/
 			
-		return "/Project/view/user_updateDPro.jsp";
+		return "view/user_updateDPro";
 	}
-		
+	/*	
 	// 유저 - 일기 삭제 전송	
 	public String user_deleteDPro(HttpServletRequest req, HttpServletResponse res)  throws Throwable { 
 		HttpSession session = req.getSession();
@@ -684,27 +741,27 @@ public class StoryController {
 		req.setAttribute("check", check);
 		
 		return "/Project/view/user_deleteUPro.jsp"; 
-	}
+	}*/
 	// end. 유저 - 마이페이지 ============================= 
 
 	// 헤더 테스트 ==========================================
 	// header.jspf - /story/head
-	public String head(HttpServletRequest req, HttpServletResponse res)  throws Throwable {
+	/*@RequestMapping("/head")
+	public ModelAndView head(HttpServletRequest req, ModelAndView mv)  throws Throwable {
 		HttpSession session = req.getSession(); 
-		UserDBMyBatis dbPro = UserDBMyBatis.getInstance();
-        UserDataBean user = new UserDataBean();
+		
      
 		// 로그인이 안되었을 때
 		if(session.getAttribute("sessionID") == null)  {
-			res.sendRedirect(req.getContextPath()+"/story/index");
+			mv.setViewName(" index");
 		}
 		// 로그인 되었을 때
 		else {
-	    	res.sendRedirect(req.getContextPath()+"/story/user_main"); 
+	    	mv.setViewName("view/user_main");
 		} 
 		  	
-		return null;
-	}
+		return mv;
+	}*/
 
 // {} class
-*/}
+}

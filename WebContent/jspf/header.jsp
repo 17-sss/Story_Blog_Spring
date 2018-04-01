@@ -182,7 +182,7 @@
 		<style>
 			body,h1 {font-family: "consolas", sans-serif}
 			.bgimg {
-			    background-image: url("/Story_Blog_MyBatis/Project/img/back2_babypink.jpg");
+			    background-image: url("${pageContext.request.contextPath}/img/back2_babypink.jpg");
 			    min-height: 100%;
 			    background-position: center;
 			    background-size: cover;		
@@ -194,7 +194,7 @@
 		<script type="text/javascript">
 	        // 로그아웃 담당 JSP로 이동
 	        function logoutPro(){
-	            location.href="/Story_Blog_MyBatis/story/LogoutPro";
+	            location.href="${pageContext.request.contextPath}/story/LogoutPro";
 	       	 }
 		 </script>
 		 
@@ -246,15 +246,15 @@
 		<a href="#" class="w3-bar-item w3-button" style="width: 10%">&nbsp;</a>
 		<div>
 			<c:if test="${sessionID ne 'admin'}">
-				<a href="<%=request.getContextPath() %>/story/user_main" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 13.3%; margin-left: 25%;">Main</a>
-				<a href="<%=request.getContextPath() %>/story/user_timeline" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 13.3%;">Timeline</a>
+				<a href="${pageContext.request.contextPath}/story/user_main" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 13.3%; margin-left: 25%;">Main</a>
+				<a href="${pageContext.request.contextPath}/story/user_timeline" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 13.3%;">Timeline</a>
 				<a href="<%=request.getContextPath() %>/story/user_gallery" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 13.3%; margin-right: 25%;">Gallery</a>
 			</c:if>
 			<c:if test="${sessionID eq 'admin'}">
-				<a href="<%=request.getContextPath() %>/story/user_main" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 10%; margin-left: 25%;">Main</a>
-				<a href="<%=request.getContextPath() %>/story/user_timeline" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 10%;">Timeline</a>
-				<a href="<%=request.getContextPath() %>/story/user_gallery" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 10%;">Gallery</a>
-				<a href="<%=request.getContextPath() %>/story/admin/accountList" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 10%; margin-right: 25%;">Account List</a>
+				<a href="${pageContext.request.contextPath}/story/user_main" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 10%; margin-left: 25%;">Main</a>
+				<a href="${pageContext.request.contextPath}/story/user_timeline" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 10%;">Timeline</a>
+				<a href="${pageContext.request.contextPath}/story/user_gallery" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 10%;">Gallery</a>
+				<a href="${pageContext.request.contextPath}/admin/accountList" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 10%; margin-right: 25%;">Account List</a>
 			</c:if>	
 			<%-- <a href="<%=request.getContextPath() %>/story/user_map" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 15%;">Map</a>
 			<a href="<%=request.getContextPath() %>/story/user_calender" class="w3-bar-item w3-button w3-pink w3-border-right" style="width: 15%;">Calendar</a> --%>
@@ -287,11 +287,11 @@
         		</a> --%>
         	</h4>
         	
-         	<p class="w3-center"><img src="/Story_Blog_MyBatis/userSave/${filename}" alt="${filename}" class="w3-circle" style="height:106px;width:106px"></p>
+         	<p class="w3-center"><img src="${pageContext.request.contextPath}/userSave/${filename}" alt="${filename}" class="w3-circle" style="height:106px;width:106px"></p>
          	<br>
         
       	</div>
-      	<button class="w3-button w3-bar-item w3-center w3-light-gray" onclick="location.href='<%=request.getContextPath() %>/story/user_set'">My Page</button>
+      	<button class="w3-button w3-bar-item w3-center w3-light-gray" onclick="location.href='${pageContext.request.contextPath}/story/user_set'">My Page</button>
       	
       	<!-- <div class="w3-bar-item w3-center w3-margin-left w3-margin-right" style="margin-top: 50%;"> -->
       	<div style="margin-left: 5%; margin-top: 50%;">

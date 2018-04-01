@@ -29,7 +29,7 @@
 <div style="margin-left: 10%; margin-right: 10%;">
 
 		<!-- 하루의 끝 - form 전송 -->
-		<form action="<%=request.getContextPath() %>/story/user_write" method="post">
+		<form action="${pageContext.request.contextPath}/story/user_write" method="post">
 				
 			<!-- 하루의 끝 -->
 			<div class="w3-row-padding">
@@ -39,7 +39,7 @@
 							<h6 class="w3-text-gray">오늘 하루를 요약해보세요.</h6>
 							<input class="w3-input w3-border w3-text-grey" name="subject" type="text" style="font-size: 9pt;" value="${subject}"><br>
 							<button type="submit" class="w3-button w3-theme w3-pink w3-right" 
-								onclick="location.href='/Story_Blog_MyBatis/story/user_write'">글쓰기</button>
+								onclick="location.href='${pageContext.request.contextPath}/story/user_write'">글쓰기</button>
 								<input type="hidden" name="diaryid" value="${diaryid}">
 								<input type="hidden" name="subject" value="${subejct}">
 						</div>
@@ -74,15 +74,15 @@
         <c:forEach var="diary" items="${diaryList}">
 		<div class="w3-container w3-card w3-white w3-round w3-margin">
 			<br> 
-			<img src="<%=request.getContextPath() %>/userSave/${filename}" alt="${filename}" class="w3-left w3-circle w3-margin-right"
+			<img src="${pageContext.request.contextPath}/userSave/${filename}" alt="${filename}" class="w3-left w3-circle w3-margin-right"
 				style="width: 60px; height: 60px"> 
 			<!-- 날짜 출력 -->
 			<span class="w3-right w3-text-gray">${diary.cdate}</span>
 			<!-- 제목 출력 -->
-			<b>제목: </b><a href="<%=request.getContextPath()%>/story/user_content?num=${diary.num}&pageNum=${currentPage}"><b>${diary.subject}</b></a>
+			<b>제목: </b><a href="${pageContext.request.contextPath}/story/user_content?num=${diary.num}&pageNum=${currentPage}"><b>${diary.subject}</b></a>
 			<!-- 수정, 삭제 -->
 			<div style="margin-top: 6px;">
-				<form method="post" style="display: inline-block; margin-left: 10px;" class="w3-right" action="<%=request.getContextPath() %>/story/user_deleteDPro">
+				<form method="post" style="display: inline-block; margin-left: 10px;" class="w3-right" action="${pageContext.request.contextPath}/story/user_deleteDPro">
 					<input type="submit" class="w3-button w3-red w3-small" value="삭제">
 					
 					<!-- hidden으로  deleteDPro에 넘기기!!!  -->
@@ -92,7 +92,7 @@
                		<!--  -->
 				</form>
 					
-				<form method="post" style="display: inline-block;" class="w3-right" action="<%=request.getContextPath() %>/story/user_updateDForm">
+				<form method="post" style="display: inline-block;" class="w3-right" action="${pageContext.request.contextPath}/story/user_updateDForm">
 					 <input type="submit" class="w3-button w3-blue w3-small" value="수정">
 					 
 					 <!-- hidden으로  updateDForm에 넘기기!!!  -->
@@ -115,7 +115,7 @@
 			<c:if test="${diary.filename0!=null}">
 				<div class="w3-third w3-container w3-margin-bottom">
 					<div class="w3-container w3-white w3-padding w3-center">
-						<img src="<%=request.getContextPath() %>/fileSave/${diary.filename0}" alt="${diary.filename0}" class=autoimg>
+						<img src="${pageContext.request.contextPath}/fileSave/${diary.filename0}" alt="${diary.filename0}" class=autoimg>
 					</div>
 				</div>		
 			</c:if>
@@ -123,7 +123,7 @@
 			<c:if test="${diary.filename1!=null}">
 				<div class="w3-third w3-container w3-margin-bottom">
 					<div class="w3-container w3-white w3-padding w3-center">
-						<img src="<%=request.getContextPath() %>/fileSave/${diary.filename1}" alt="${diary.filename1}" class=autoimg>
+						<img src="${pageContext.request.contextPath}/fileSave/${diary.filename1}" alt="${diary.filename1}" class=autoimg>
 					</div>
 				</div>		
 			</c:if>
@@ -131,7 +131,7 @@
 			<c:if test="${diary.filename2!=null}">
 				<div class="w3-third w3-container w3-margin-bottom">
 					<div class="w3-container w3-white w3-padding w3-center">
-						<img src="<%=request.getContextPath() %>/fileSave/${diary.filename2}" alt="${diary.filename2}" class=autoimg>
+						<img src="${pageContext.request.contextPath}/fileSave/${diary.filename2}" alt="${diary.filename2}" class=autoimg>
 					</div>
 				</div>		
 			</c:if>
@@ -139,7 +139,7 @@
 			<c:if test="${diary.filename3!=null}">
 				<div class="w3-third w3-container w3-margin-bottom">
 					<div class="w3-container w3-white w3-padding w3-center">
-						<img src="<%=request.getContextPath() %>/fileSave/${diary.filename3}" alt="${diary.filename3}" class=autoimg>
+						<img src="${pageContext.request.contextPath}/fileSave/${diary.filename3}" alt="${diary.filename3}" class=autoimg>
 					</div>
 				</div>		
 			</c:if>
@@ -147,7 +147,7 @@
 			<c:if test="${diary.filename4!=null}">
 				<div class="w3-third w3-container w3-margin-bottom">
 					<div class="w3-container w3-white w3-padding w3-center">
-						<img src="<%=request.getContextPath() %>/fileSave/${diary.filename4}" alt="${diary.filename4}" class=autoimg>
+						<img src="${pageContext.request.contextPath}/fileSave/${diary.filename4}" alt="${diary.filename4}" class=autoimg>
 					</div>
 				</div>		
 			</c:if>

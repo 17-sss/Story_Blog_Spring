@@ -100,6 +100,7 @@ public class AdminController {
 	@RequestMapping("/updateUserPro")
 	public String updateUserPro(Model model, MultipartHttpServletRequest req) throws Exception {
 		String pageNum = req.getParameter("pageNum");
+		
 		if (pageNum == null || pageNum == "") {
 			pageNum = "1";
 		}

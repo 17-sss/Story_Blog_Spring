@@ -268,7 +268,7 @@
 		
 	
 	  <!-- 이메일, 비번 틀릴 경우 -->
-	  <%-- <div class="w3-center">
+	  <div class="w3-center">
 	  <% 
             String msg=request.getParameter("msg");
             
@@ -281,7 +281,7 @@
             	out.println("<script>alert('이메일을 확인해 주세요.');</script>");
             }
         %> 
-        </div> --%>
+        </div>
       <!-- end. 이메일, 비번 틀릴 경우 -->
 </div>
 <!-- end. 전체 -->
