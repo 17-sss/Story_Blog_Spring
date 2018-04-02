@@ -34,7 +34,7 @@ public class AdminController {
 	// /admin/accountList
 	@RequestMapping("/accountList")
 	public String accountList(Model model, HttpServletRequest req) throws Exception {
-		int pageSize = 5;
+		int pageSize = 10;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String pageNum = req.getParameter("pageNum");
 		if (pageNum == null || pageNum == "") {
@@ -49,6 +49,7 @@ public class AdminController {
 		int currentPage = Integer.parseInt(pageNum);
 		int startRow = (currentPage - 1) * pageSize + 1;
 		int endRow = currentPage * pageSize;
+		//System.out.println("+++++++++++\n"+"start: "+ startRow + "\nend: "+endRow + "\n+++++++++++");
 		int count = 0;
 		int number = 0;
 		List usList = null;

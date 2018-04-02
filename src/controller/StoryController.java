@@ -85,8 +85,8 @@ public class StoryController {
 	
 	// 유저 - 이메일 확인  <<이메일 같을 시 에러..>>
 	@RequestMapping("/confirmEmail")
-	public String confirmEmail (HttpServletRequest req, Model model)  throws Throwable { 
-		String email = req.getParameter("email"); 
+	public String confirmEmail (String email, Model model)  throws Throwable { 
+		//String email = req.getParameter("email"); 
 		boolean result = usPro.confirmEmail(email);
 		model.addAttribute("result", result);
 		model.addAttribute("email", email);
@@ -96,12 +96,12 @@ public class StoryController {
 	
 	// 유저 - 로그인 
 	@RequestMapping("/LoginPro")
-	public String LoginPro(HttpServletRequest req, ModelAndView mv)  throws Throwable { 
+	public String LoginPro(String email, String pwd, HttpServletRequest req, ModelAndView mv)  throws Throwable { 
 		 // 로그인 화면에 입력된 아이디와 비밀번호를 가져온다
 		HttpSession session = req.getSession();
 		
-		String email= req.getParameter("email");
-        String pwd = req.getParameter("pwd");
+		/*String email= req.getParameter("email");
+        String pwd = req.getParameter("pwd");*/
         System.out.println("LoginPro=============");
      	
         // DB에서 아이디, 비밀번호 확인
@@ -141,8 +141,7 @@ public class StoryController {
 	// 유저 - 로그아웃
 	@RequestMapping("/LogoutPro")
 	public ModelAndView LogoutPro(HttpServletRequest req, ModelAndView mv)  throws Throwable {
-		
-	    HttpSession  session = req.getSession();
+	    HttpSession session = req.getSession();
 		
 	    session.invalidate(); // 모든세션정보 삭제
 	    mv.setViewName("index"); // 로그인 화면으로 다시 돌아간다.
@@ -152,22 +151,21 @@ public class StoryController {
 	
 	// 유저 - 메인
 	@RequestMapping("/user_main")
-	public String user_main (HttpServletRequest req, Model model)  throws Throwable {
+	public String user_main (String diaryid, String subject, String pageNum, HttpServletRequest req, Model model)  throws Throwable {
 		HttpSession session = req.getSession();
 		
-		String diaryid = req.getParameter("diaryid");
+		/*String diaryid = req.getParameter("diaryid");
 		String subject = req.getParameter("subject");
+		String pageNum = req.getParameter("pageNum");*/
 		
 		if (diaryid==null) diaryid = "Main"; 
 		if (subject==null) subject = "하루의 끝";
-		
+		if (pageNum == null || pageNum =="") {pageNum = "1";}
 		
 		int pageSize= 5;
 		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		String pageNum = req.getParameter("pageNum");
-		if (pageNum == null || pageNum =="") {
-			pageNum = "1";
-		}
+		
+	
 		int currentPage = Integer.parseInt(pageNum);
 		
 		int startRow = (currentPage - 1) * pageSize + 1;
@@ -209,22 +207,20 @@ public class StoryController {
 	
 	// 유저 - 갤러리
 	@RequestMapping("/user_gallery")
-	public String user_gallery (HttpServletRequest req, Model model)  throws Throwable {
+	public String user_gallery (String diaryid, String subject, String pageNum, Model model, HttpServletRequest req)  throws Throwable {
 		HttpSession session = req.getSession();
 		
-		String diaryid = req.getParameter("diaryid");
+		/*String diaryid = req.getParameter("diaryid");
 		String subject = req.getParameter("subject");
+		String pageNum = req.getParameter("pageNum");*/
 		
 		if (diaryid==null) diaryid = "Main"; 
 		if (subject==null) subject = "하루의 끝";
-		
-		
+		if (pageNum == null || pageNum =="") {pageNum = "1";}
 		int pageSize= 9;
 		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		String pageNum = req.getParameter("pageNum");
-		if (pageNum == null || pageNum =="") {
-			pageNum = "1";
-		}
+		
+		
 		int currentPage = Integer.parseInt(pageNum);
 		
 		int startRow = (currentPage - 1) * pageSize + 1;
@@ -268,22 +264,21 @@ public class StoryController {
 	
 	// 유저 - 타임라인
 	@RequestMapping("/user_timeline")
-	public String user_timeline (HttpServletRequest req, Model model)  throws Throwable {
+	public String user_timeline (String diaryid, String subject, String pageNum, HttpServletRequest req, Model model)  throws Throwable {
 		HttpSession session = req.getSession();
 		
-		String diaryid = req.getParameter("diaryid");
+		/*String diaryid = req.getParameter("diaryid");
 		String subject = req.getParameter("subject");
+		String pageNum = req.getParameter("pageNum");*/
 		
 		if (diaryid==null) diaryid = "Main"; 
 		if (subject==null) subject = "하루의 끝";
+		if (pageNum == null || pageNum =="") {pageNum = "1";}
 		
 		
 		int pageSize= 5;
 		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		String pageNum = req.getParameter("pageNum");
-		if (pageNum == null || pageNum =="") {
-			pageNum = "1";
-		}
+		
 		int currentPage = Integer.parseInt(pageNum);
 		
 		int startRow = (currentPage - 1) * pageSize + 1;
@@ -324,21 +319,23 @@ public class StoryController {
 	
 	// 유저 - 일기 수정 폼
 	@RequestMapping("/user_updateDForm")
-	public String user_updateDForm(HttpServletRequest req, Model model)  throws Throwable { 
+	public String user_updateDForm(String diaryid, String pageNum, HttpServletRequest req, Model model)  throws Throwable { 
 		HttpSession session = req.getSession();
 		
-		String diaryid = req.getParameter("diaryid");
+		/*String diaryid = req.getParameter("diaryid");
+		String pageNum = req.getParameter("pageNum");*/
+		
 		if (diaryid==null) diaryid="Main";
-		String pageNum = req.getParameter("pageNum");
 		if (pageNum == null || pageNum == "") { pageNum = "1"; }
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		
 		int num = Integer.parseInt(req.getParameter("num"));
 		
 		try {
 			DiaryDataBean diary = dbPro.getDiary(num, (String)session.getAttribute("sessionID"), diaryid);
 			
+			model.addAttribute("diaryid", diaryid);
 			model.addAttribute("pageNum", pageNum); 
 			model.addAttribute("diary", diary); 
 		} catch (Exception e) {}
@@ -346,18 +343,18 @@ public class StoryController {
 		return "view/user_updateDForm"; 
 	}
 	
-	// 일기 수정 전송 - 파일 업로드 (수정요망)
+	// 일기 수정 전송 - 파일 업로드 
 	@RequestMapping("/user_updateDPro")
-	public String user_updateDPro(Model model, MultipartHttpServletRequest req)  throws Throwable {
+	public String user_updateDPro(String pageNum, String diaryid, Model model, MultipartHttpServletRequest req)  throws Throwable {
 		DiaryDataBean diary = new DiaryDataBean();
 		
-		int num = Integer.parseInt(req.getParameter("num"));
+		/*String pageNum = req.getParameter("pageNum");
+		String diaryid = req.getParameter("diaryid");*/
 		
-		String pageNum = req.getParameter("pageNum");
 		if (pageNum == null || pageNum == "") {pageNum = "1";}
-		
-		String diaryid = req.getParameter("diaryid");
 		if (diaryid==null) diaryid = "Main";
+		
+		int num = Integer.parseInt(req.getParameter("num"));
 	
 		//ModelAndView mv = new ModelAndView();
 		MultipartFile multi0 = req.getFile("filename0");
@@ -435,14 +432,16 @@ public class StoryController {
 	
 	// 유저 - 일기 삭제 전송
 	@RequestMapping(value = "user_deleteDPro")
-	public ModelAndView user_deleteDPro(HttpServletRequest req)  throws Throwable { 
+	public ModelAndView user_deleteDPro(String pageNum, String diaryid, HttpServletRequest req)  throws Throwable { 
 		ModelAndView mv = new ModelAndView();
 		
 		HttpSession session = req.getSession();
 		
-		String diaryid = req.getParameter("diaryid");
-		String pageNum = req.getParameter("pageNum");
+		/*String pageNum = req.getParameter("pageNum");
+		String diaryid = req.getParameter("diaryid");*/
+		
 		if (pageNum == null || pageNum == "") {pageNum = "1";}
+		if (diaryid==null) diaryid = "Main";
 		
 		int num = Integer.parseInt(req.getParameter("num"));
 		
@@ -460,18 +459,18 @@ public class StoryController {
 	
 	// 유저 - 일기 쓰기 폼 
 	@RequestMapping("/user_write")
-	public String user_write(Model model, HttpServletRequest req)  throws Throwable { 
-		String subject = req.getParameter("subject");
-		String diaryid = req.getParameter("diaryid");
+	public String user_write(String diaryid, Model model, HttpServletRequest req)  throws Throwable { 
+		String subject = req.getParameter("subject"); // 매게변수에 넣으면 계속 쉼표붙음.. 왜지..
+		//String diaryid = req.getParameter("diaryid");
 		int num=0;
-		 
-		System.out.println("제목:"+subject);
 		
+		if (req.getParameter("num")!=null) {num = Integer.parseInt(req.getParameter("num"));}
 		if (diaryid==null) diaryid = "Main";
 		if (subject==null) subject = "제목없음";
-
-		if (req.getParameter("num")!=null) {num = Integer.parseInt(req.getParameter("num"));}
 		
+		
+		System.out.println("제목:"+subject);
+
 		model.addAttribute("diaryid", diaryid);
 		model.addAttribute("subject", subject);
 		model.addAttribute("num", num);
@@ -481,7 +480,7 @@ public class StoryController {
 	
 	// 유저 - 일기 쓰기 폼 전송 (사진 다수)
 	@RequestMapping("/user_writePro")
-	public ModelAndView user_writePro(MultipartHttpServletRequest req)  throws Throwable {
+	public String user_writePro(int num, String pageNum, String diaryid, MultipartHttpServletRequest req, Model model)  throws Throwable {
 		HttpSession session = req.getSession();
 		ModelAndView mv = new ModelAndView();
 		
@@ -489,10 +488,10 @@ public class StoryController {
 		
 		//int num = Integer.parseInt(req.getParameter("num"));
 		
-		String pageNum = req.getParameter("pageNum");
-		if (pageNum == null || pageNum == "") {pageNum = "1";}
+		/*String pageNum = req.getParameter("pageNum");
+		String diaryid = req.getParameter("diaryid");*/
 		
-		String diaryid = req.getParameter("diaryid");
+		if (pageNum == null || pageNum == "") {pageNum = "1";}
 		if (diaryid==null) diaryid = "Main";
 	
 		//ModelAndView mv = new ModelAndView();
@@ -557,14 +556,16 @@ public class StoryController {
 			user.setFilesize(0);
 		}*/
 		dbPro.insertDiary(diary);
-
-		mv.addObject("pageNum", pageNum);
-		//mv.setViewName("view/user_main?pageNum="+pageNum+"&diaryid="+diaryid);
-		mv.setViewName("view/user_main?pageNum="+pageNum);
+		
+		model.addAttribute("diaryid", diaryid);
+		model.addAttribute("pageNum", pageNum);
+		/*mv.addObject("pageNum", pageNum);
+		mv.setViewName("view/user_main?pageNum="+pageNum+"&diaryid="+diaryid);
+		mv.setViewName("view/user_main?pageNum="+pageNum);*/
 		
 		System.out.println("====writePro====\n"+diary+"\n==============");
 		
-		return mv;
+		return "redirect:user_main";
 	}
 	/*
 	// 유저 - 콘텐츠 (갤러리에서 이동)
