@@ -12,7 +12,7 @@
 	
 	<script type="text/javascript">
 		alert("수정 되었습니다.");
-		location.href="/Story_Blog_MyBatis/story/user_main";
+		location.href="${pageContext.request.contextPath}/story/user_main";
 	</script>
 	<%-- <meta http-equiv="Refresh" content="0;url=updateUserForm?email=${email}&pwd=${pwd}&pageNum=${pageNum}"> --%>
 	</c:if>

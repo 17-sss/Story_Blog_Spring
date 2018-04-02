@@ -33,10 +33,10 @@ public class AdminController {
 	// 包府磊 蜡历包府
 	// /admin/accountList
 	@RequestMapping("/accountList")
-	public String accountList(Model model, HttpServletRequest req) throws Exception {
+	public String accountList(String pageNum, Model model, HttpServletRequest req) throws Exception {
 		int pageSize = 10;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		String pageNum = req.getParameter("pageNum");
+		//String pageNum = req.getParameter("pageNum");
 		if (pageNum == null || pageNum == "") {
 			pageNum = "1";
 		}
@@ -84,7 +84,7 @@ public class AdminController {
 	// 包府磊 蜡历荐沥
 	// /admin/updateUserForm
 	@RequestMapping("/updateUserForm")
-	public String updateUserForm(String email, String pwd, Model model) throws Exception {
+	public String updateUserForm(String email, String pwd, String pageNum, Model model) throws Exception {
 		/*String email = req.getParameter("email");
 		String pwd = req.getParameter("pwd");*/
 		
@@ -99,12 +99,10 @@ public class AdminController {
 	// 包府磊 蜡历荐沥(Pro)
 	// /admin/updateUserPro
 	@RequestMapping("/updateUserPro")
-	public String updateUserPro(Model model, MultipartHttpServletRequest req) throws Exception {
-		String pageNum = req.getParameter("pageNum");
+	public String updateUserPro(Model model, MultipartHttpServletRequest req, String pageNum) throws Exception {
+		//String pageNum = req.getParameter("pageNum");
 		
-		if (pageNum == null || pageNum == "") {
-			pageNum = "1";
-		}
+		if (pageNum == null || pageNum == "") {pageNum = "1";}
 	
 		//ModelAndView mv = new ModelAndView();
 		MultipartFile multi = req.getFile("filename");
@@ -141,8 +139,6 @@ public class AdminController {
 		model.addAttribute("chk", chk);
 		model.addAttribute("pageNum", pageNum);
 		model.addAttribute("user", user);
-
-
 		
 		return "/admin/updateUserPro";
 	}

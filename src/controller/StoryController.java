@@ -567,130 +567,115 @@ public class StoryController {
 		
 		return "redirect:user_main";
 	}
-	/*
+	
 	// 유저 - 콘텐츠 (갤러리에서 이동)
-	public String user_content(HttpServletRequest req, HttpServletResponse res)  throws Throwable {
+	@RequestMapping("/user_content")
+	public String user_content(String diaryid, String pageNum, HttpServletRequest req, Model model)  throws Throwable {
 		HttpSession session = req.getSession();
-		int num = Integer.parseInt(req.getParameter("num"));
-		String diaryid = req.getParameter("diaryid");
-		if (diaryid==null) diaryid = "Main"; 
-
 		
-		String pageNum = req.getParameter("pageNum");
-		if (pageNum == null || pageNum =="") {
-			pageNum = "1";
-		}
+		int num = Integer.parseInt(req.getParameter("num"));
+		
+		//String diaryid = req.getParameter("diaryid");
+		//String pageNum = req.getParameter("pageNum");
+		if (diaryid==null) diaryid = "Main"; 
+		if (pageNum == null || pageNum =="") {pageNum = "1";}
+		
+		
 		try {
-			DiaryDBMyBatis dbPro = DiaryDBMyBatis.getInstance();
 			DiaryDataBean diary = dbPro.getDiary(num, (String)session.getAttribute("sessionID"), diaryid);
 			
-			req.setAttribute("diary", diary);
-			req.setAttribute("pageNum", pageNum);
+			model.addAttribute("diary", diary);
+			model.addAttribute("pageNum", pageNum);
+			
 			System.out.println("유저 콘텐츠: "+diary);
 			
 		} catch (Exception e) {e.printStackTrace();}
 		
-		return "/Project/view/user_content.jsp";
+		return "view/user_content";
 	}
 	
 	// 유저 - 마이페이지 
-	public String user_set(HttpServletRequest req, HttpServletResponse res)  throws Throwable { 
+	@RequestMapping("/user_set")
+	public String user_set(HttpServletRequest req, Model model)  throws Throwable { 
 		HttpSession session = req.getSession();
 		
 		try {
-			UserDBMyBatis userPro = UserDBMyBatis.getInstance();
-			UserDataBean user = userPro.getUser((String)session.getAttribute("sessionID"));
+			UserDataBean user = usPro.getUser((String)session.getAttribute("sessionID"));
 			
-			req.setAttribute("user", user); 
+			model.addAttribute("user", user); 
 		} catch (Exception e) {}
-		return "/Project/view/user_set.jsp"; 
+		return "view/user_set"; 
 	}
 	
-	
-	public String user_updateUPro(HttpServletRequest req, HttpServletResponse res)  throws Throwable {
+	@RequestMapping("/user_updateUPro")
+	public String user_updateUPro(MultipartHttpServletRequest req, Model model)  throws Throwable {
+		// ModelAndView mv = new ModelAndView();
+		MultipartFile multi = req.getFile("filename");
+		String filename = multi.getOriginalFilename();
+		System.out.println("[마이페이지] 유저 수정 이미지: " + filename);
+
 		UserDataBean user = new UserDataBean();
-		UserDBMyBatis dbPro = UserDBMyBatis.getInstance();
-		
-		// 6) fileSave 폴더 webcontent폴더 안에 만들기
-		String realFolder = ""; //웹 어플리케이션상의 절대경로
-		String encType = "euc-kr"; // 인코딩 타입
-		int maxSize = 5 *1024 * 1024; // 최대 업로드 될 파일 크기 .. 5MB
-		ServletContext context = req.getServletContext();
-		realFolder =context.getRealPath("userSave");
-		MultipartRequest multi = null;
-		
-		// DefaultFileRenamePolicy는 중복된 파일 업로드할때 자동으로 Rename / aaa있으면 aaa(1)로
-		multi = new MultipartRequest(req, realFolder, maxSize, encType,  new DefaultFileRenamePolicy());
-		
-		Enumeration files = multi.getFileNames();
-		String filename="";
-		File file = null;
-		// =================================================
-		// 7) 
-		if (files.hasMoreElements()) { // 만약 파일이 다수면 if를 while로..
-			String name = (String) files.nextElement();
-			filename = multi.getFilesystemName(name); // DefaultFileRenamePolicy 적용
-			String original = multi.getOriginalFileName(name); // 파일 원래 이름 (추가해도되고, 안해도..?)
-			String type = multi.getContentType(name); // 파일 타입 (추가해도되고, 안해도..?)
-			file = multi.getFile(name);
-		}
-		
-		try {
-			user.setEmail(multi.getParameter("email"));
-			user.setName(multi.getParameter("name"));
-			user.setTel(multi.getParameter("tel"));
-			user.setPwd(multi.getParameter("pwd"));
-			user.setFilename(multi.getParameter("filename"));
-			user.setBirth(multi.getParameter("birth"));
-			user.setIp(req.getRemoteAddr());
-			
-			if (file != null) {
-				user.setFilename(filename);
-				user.setFilesize((int)file.length());
-			} else {
-				user.setFilename(" ");
-				user.setFilesize(0);
-			}
-			
-			int chk = dbPro.updateUser(user);
-			
-			req.setAttribute("chk", chk);
-			
-			System.out.println("수정여부: " + chk);
-			System.out.println("수정아 좀되라..==========: "+user);
-			
-			
-		} catch (Exception e) {e.printStackTrace();}
-			
-		return "/Project/view/user_updateUPro.jsp";
-	}
-	
-	public String user_deleteUPro(HttpServletRequest req, HttpServletResponse res)  throws Throwable {
-		UserDataBean user = new UserDataBean();
-		
-		String pageNum = req.getParameter("pageNum");
-		if (pageNum == null || pageNum == "") {pageNum = "1";}
-		String email = req.getParameter("email");
-		String pwd = req.getParameter("pwd");
-		
+
 		user.setEmail(req.getParameter("email"));
 		user.setPwd(req.getParameter("pwd"));
 		user.setName(req.getParameter("name"));
 		user.setTel(req.getParameter("tel"));
 		user.setBirth(req.getParameter("birth"));
+		user.setFilename(req.getParameter("filename"));
+		user.setIp(req.getRemoteAddr());
+
+		if (filename != null && !filename.equals("")) {
+			String uploadPath = req.getRealPath("/") + "userSave"; // 작대기 그어진 거 신경쓰지말기. 이클립스에서 쓰지않았음 좋겠다는 표시를 해주는 것 뿐.
+			System.out.println("업로드 경로: " + uploadPath);
+			FileCopyUtils.copy(multi.getInputStream(),
+					new FileOutputStream(uploadPath + "/" + multi.getOriginalFilename()));
+			user.setFilename(filename);
+			user.setFilesize((int) multi.getSize());
+		} /*
+			 * else { user.setFilename(""); user.setFilesize(0); }
+			 */
+
+		System.out.println(user);
+		int chk = usPro.updateUser(user);
+
+		System.out.println("수정여부: " + chk);
+
+		model.addAttribute("chk", chk);
+		model.addAttribute("user", user);
+
+		return "view/user_updateUPro";
+	}
+	
+	@RequestMapping(value = "user_deleteUPro")
+	public ModelAndView user_deleteUPro(String email, String pwd, HttpServletRequest req)  throws Throwable {
+		UserDataBean user = new UserDataBean();
+		ModelAndView mv = new ModelAndView();
+		/*String pageNum = req.getParameter("pageNum");
+		String email = req.getParameter("email");
+		String pwd = req.getParameter("pwd");*/
+		//if (pageNum == null || pageNum == "") {pageNum = "1";}
 		
-		UserDBMyBatis dbPro = UserDBMyBatis.getInstance();
 		
-		int check = dbPro.deleteUser(email, pwd);
+		/*user.setEmail(req.getParameter("email"));
+		user.setPwd(req.getParameter("pwd"));
+		user.setName(req.getParameter("name"));
+		user.setTel(req.getParameter("tel"));
+		user.setBirth(req.getParameter("birth"));*/
+		
+		int check = usPro.deleteUser(email, pwd);
 		
 		System.out.println("삭제여부: " + check);
 		
-		req.setAttribute("pwd", pwd);
+		mv.addObject("check", check);
+		mv.setViewName("view/user_deleteUPro");
+	
+		/*req.setAttribute("pwd", pwd);
 		req.setAttribute("email", email);
-		req.setAttribute("check", check);
-		
-		return "/Project/view/user_deleteUPro.jsp"; 
-	}*/
+		req.setAttribute("check", check);*/
+	
+		return mv;
+	}
+
 	// end. 유저 - 마이페이지 ============================= 
 
 	// 헤더 테스트 ==========================================

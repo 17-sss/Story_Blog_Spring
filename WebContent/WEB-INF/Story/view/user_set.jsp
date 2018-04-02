@@ -5,7 +5,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-	<title>Story Blog - 구역테스트</title>
+	<title>Story Blog - 마이페이지</title>
 </head>
 <body>
 <!-- 전체 틀 div ★ --> 
@@ -23,7 +23,7 @@
 			</div>
 			
 			<!--수정  -->
-			<form method="post" enctype="multipart/form-data" action="<%=request.getContextPath() %>/story/user_updateUPro">
+			<form method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/story/user_updateUPro">
 				<div class="w3-card w3-round w3-white w3-padding">
 					
 					<div class="w3-row w3-section">
@@ -84,7 +84,7 @@
 			
 				
 			<!-- 삭제 -->
-			<form method="post" style="display: inline-block; margin-left: 10px;" class="w3-right" action="<%=request.getContextPath() %>/story/user_deleteUPro">
+			<form method="post" style="display: inline-block; margin-left: 10px;" class="w3-right" action="${pageContext.request.contextPath}/story/user_deleteUPro">
 				<span class="w3-text-red" style="font-size: 9pt;"><b> * 버튼 클릭시 바로 탈퇴됩니다. </b> </span>
 				<input type="submit" class="w3-button w3-red w3-small w3-margin" value="탈퇴">
 				<!-- hidden으로  deleteUro에 넘기기!!!  -->

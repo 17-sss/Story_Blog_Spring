@@ -39,7 +39,7 @@
         <!-- 일기 (메인) -->
 		<div class="w3-container w3-card w3-white w3-round w3-margin">
 			<br> 
-			<img src="/Story_Blog_MyBatis/userSave/${filename}" alt="${filename}" class="w3-left w3-circle w3-margin-right"
+			<img src="${pageContext.request.contextPath}/userSave/${filename}" alt="${filename}" class="w3-left w3-circle w3-margin-right"
 				style="width: 60px; height: 60px"> 
 			<!-- 날짜 출력 -->
 			<span class="w3-right w3-text-gray">${diary.cdate}</span>
@@ -47,7 +47,7 @@
 			<b>제목:</b> ${diary.subject}
 			<!-- 수정, 목록, 삭제 -->
 			<div style="margin-top: 6px;">
-				<form method="post" style="display: inline-block; margin-left: 10px;" class="w3-right" action="<%=request.getContextPath() %>/story/user_deleteDPro">
+				<form method="post" style="display: inline-block; margin-left: 10px;" class="w3-right" action="${pageContext.request.contextPath}/story/user_deleteDPro">
 					<input type="submit" class="w3-button w3-red w3-small" value="삭제">
 					
 					<!-- hidden으로  deleteDPro에 넘기기!!!  -->
@@ -57,7 +57,7 @@
                		<!--  -->
 				</form>
 					
-				<form method="post" style="display: inline-block; margin-left: 10px;" class="w3-right" action="<%=request.getContextPath() %>/story/user_updateDForm">
+				<form method="post" style="display: inline-block; margin-left: 10px;" class="w3-right" action="${pageContext.request.contextPath}/story/user_updateDForm">
 					<input type="submit" class="w3-button w3-blue w3-small" value="수정">
 					 
 					 <input type="button" style="display: inline-block; margin-left: 10px;" class="w3-button w3-right w3-yellow w3-small" value="목록" onclick="history.back();" >
@@ -84,7 +84,7 @@
 				
 			<div class="w3-third w3-container w3-margin-bottom">
 				<div class="w3-container w3-white w3-padding w3-center">
-					<img src="/Story_Blog_MyBatis/fileSave/${diary.filename0}" alt="${diary.filename0}" class=autoimg onclick="onClick(this)">
+					<img src="${pageContext.request.contextPath}/fileSave/${diary.filename0}" alt="${diary.filename0}" class=autoimg onclick="onClick(this)">
 					<div class="w3-container w3-white">
 						<p>${diary.cdate}</p>
 					</div>
@@ -97,7 +97,7 @@
 				
 			<div class="w3-third w3-container w3-margin-bottom">
 				<div class="w3-container w3-white w3-padding w3-center">
-					<img src="/Story_Blog_MyBatis/fileSave/${diary.filename1}" alt="${diary.filename1}" class=autoimg onclick="onClick(this)">
+					<img src="${pageContext.request.contextPath}/fileSave/${diary.filename1}" alt="${diary.filename1}" class=autoimg onclick="onClick(this)">
 					<div class="w3-container w3-white">
 						<p>${diary.cdate}</p>
 					</div>
@@ -110,7 +110,7 @@
 				
 			<div class="w3-third w3-container w3-margin-bottom">
 				<div class="w3-container w3-white w3-padding w3-center">
-					<img src="/Story_Blog_MyBatis/fileSave/${diary.filename2}" alt="${diary.filename2}" class=autoimg onclick="onClick(this)">
+					<img src="${pageContext.request.contextPath}/fileSave/${diary.filename2}" alt="${diary.filename2}" class=autoimg onclick="onClick(this)">
 					<div class="w3-container w3-white">
 						<p>${diary.cdate}</p>
 					</div>
@@ -123,7 +123,7 @@
 				
 			<div class="w3-third w3-container w3-margin-bottom">
 				<div class="w3-container w3-white w3-padding w3-center">
-					<img src="/Story_Blog_MyBatis/fileSave/${diary.filename3}" alt="${diary.filename3}"  class=autoimg onclick="onClick(this)">
+					<img src="${pageContext.request.contextPath}/fileSave/${diary.filename3}" alt="${diary.filename3}"  class=autoimg onclick="onClick(this)">
 					<div class="w3-container w3-white">
 						<p>${diary.cdate}</p>
 					</div>
@@ -136,7 +136,7 @@
 				
 			<div class="w3-third w3-container w3-margin-bottom">
 				<div class="w3-container w3-white w3-padding w3-center">
-					<img src="/Story_Blog_MyBatis/fileSave/${diary.filename4}" alt="${diary.filename4}" class=autoimg onclick="onClick(this)">
+					<img src="${pageContext.request.contextPath}/fileSave/${diary.filename4}" alt="${diary.filename4}" class=autoimg onclick="onClick(this)">
 					<div class="w3-container w3-white">
 						<p>${diary.cdate}</p>
 					</div>
