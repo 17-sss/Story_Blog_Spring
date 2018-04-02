@@ -13,7 +13,7 @@
 			display: inline-block;
 			width: auto !important;
 			max-width: 100%;
-			height: auto !important;
+			height: 250px !important;
 		}
 	</style>
 </head>
